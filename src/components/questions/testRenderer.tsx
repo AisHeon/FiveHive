@@ -86,7 +86,7 @@ export default function DigitalTestingPage({
   >({});
 
   const [contentHighlights, setContentHighlights] = useState<Highlight[][]>(
-    initialQuestions.map(() => []),
+    (inputQuestions ?? initialQuestions).map(() => []),
   );
 
   const [showEliminationTools, setShowEliminationTools] = useState(false);
@@ -132,7 +132,6 @@ export default function DigitalTestingPage({
       };
       setQuestions(updatedQuestions);
     }
-    setQuestions(updatedQuestions);
   };
 
   const handleSelectAnswer = (optionId: string) => {

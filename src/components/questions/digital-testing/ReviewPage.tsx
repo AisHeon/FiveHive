@@ -18,27 +18,32 @@ export function isQuestionCorrect(
   question: QuestionFormat,
   selected: string[],
 ) {
-  const normalizedSelected = selected.flatMap((selectedId) => {
-    const optionIndex = question.options.findIndex(
-      (option) => option.id === selectedId,
-    );
+  const answerIds = question.answers.map((answer) => {
+    const trimmed = answer.trim();
 
-    return optionIndex >= 0
-      ? [selectedId, String(optionIndex + 1)]
-      : [selectedId];
+    if (question.options.some((option) => option.id === trimmed)) {
+      return trimmed;
+    }
+
+    const positionIndex = Number(trimmed) - 1;
+    if (
+      Number.isInteger(positionIndex) &&
+      positionIndex >= 0 &&
+      positionIndex < question.options.length
+    ) {
+      return question.options[positionIndex]!.id;
+    }
+
+    return trimmed;
   });
 
-  const normalizedAnswers = question.answers.map((answer) => answer.trim());
-
   if (question.type === "mcq") {
-    return normalizedAnswers.some((answer) => {
-      return normalizedSelected.includes(answer);
-    });
+    return answerIds.some((answerId) => selected.includes(answerId));
   }
 
-  if (normalizedSelected.length !== normalizedAnswers.length) return false;
-  for (const answer of normalizedAnswers) {
-    if (!normalizedSelected.includes(answer)) return false;
+  if (selected.length !== answerIds.length) return false;
+  for (const answerId of answerIds) {
+    if (!selected.includes(answerId)) return false;
   }
 
   return true;
@@ -57,7 +62,7 @@ export default function QuestionNavigation({
     <>
       <div className="relative p-6">
         <h2 className="mb-6 text-center text-xl font-semibold uppercase">
-          {pathname.split("/")[2]?.replaceAll("-", " ")} Test
+          {pathname?.split("/")[2]?.replaceAll("-", " ")} Test
         </h2>
 
         <div className="mb-6 flex justify-center gap-8 border-b border-t py-4">

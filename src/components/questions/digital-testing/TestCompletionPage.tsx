@@ -70,9 +70,7 @@ export default function TestCompletionPage({
     const selected = pool[Math.floor(Math.random() * pool.length)] ??
       "Great work, {username}!";
 
-    return selected
-      .replaceAll("{username}", displayName)
-      .replaceAll("[UserName]", displayName);
+    return selected.replaceAll("{username}", displayName);
   });
 
   return (
